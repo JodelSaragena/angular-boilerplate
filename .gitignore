@@ -1,10 +1,10 @@
-# See http://help.github.com/ignore-files for more about ignoring files.
+# See http://help.github.com/ignore-files/ for more about ignoring files.
 
-# compiled output
+# Compiled output
 /dist
 /tmp
 /out-tsc
-# Only exist if Bazel was run
+# Only exists if Bazel was run
 /bazel-out
 
 # dependencies
@@ -12,7 +12,7 @@
 
 # profiling files
 chrome-profiler-events*.json
-speed-measure-plugins*.json
+speed-measure-plugin*.json
 
 # IDEs and editors
 /.idea
@@ -31,7 +31,7 @@ speed-measure-plugins*.json
 !.vscode/extensions.json
 .history/*
 
-# misc
+# Misc
 /.sass-cache
 /connect.lock
 /coverage
@@ -41,6 +41,6 @@ yarn-error.log
 testem.log
 /typings
 
-# System Files
+# System files
 .DS_Store
 Thumbs.db

@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, Input} from '@angular/core';
+import { Component, OnInit, OnDestroy, Input } from '@angular/core';
 import { Router, NavigationStart } from '@angular/router';
 import { Subscription } from 'rxjs';
 
@@ -15,76 +15,80 @@ export class AlertComponent implements OnInit, OnDestroy {
     routeSubscription: Subscription;
 
     constructor(private router: Router, private alertService: AlertService) { }
+
     ngOnInit() {
-        //subscribe to new alert notifications
+        // subscribe to new alert notifications
         this.alertSubscription = this.alertService.onAlert(this.id)
-            .subscription(alert => {
-                //clear alerts when an empty alert is received
+            .subscribe(alert => {
+                // clear alerts when an empty alert is received
                 if (!alert.message) {
-                    //filter out alerts without 'keepAfterRouteChange' flag
+                    // filter out alerts without 'keepAfterRouteChange' flag
                     this.alerts = this.alerts.filter(x => x.keepAfterRouteChange);
 
-                    //remove 'keepAfterRouteChange' flag on the rest
+                    // remove 'keepAfterRouteChange' flag on the rest
                     this.alerts.forEach(x => delete x.keepAfterRouteChange);
                     return;
                 }
 
-                //add alert to array
+                // add alert to array
                 this.alerts.push(alert);
 
-                //auto close alert if required
+                // auto close alert if required
                 if (alert.autoClose) {
                     setTimeout(() => this.removeAlert(alert), 3000);
                 }
-            });
-        //clear alerts on location change
+           });
+
+        // clear alerts on location change
         this.routeSubscription = this.router.events.subscribe(event => {
             if (event instanceof NavigationStart) {
                 this.alertService.clear(this.id);
             }
-        }); 
+        });
     }
+
     ngOnDestroy() {
-        //unsubscribe to avoid memory leaks 
+        // unsubscribe to avoid memory leaks
         this.alertSubscription.unsubscribe();
         this.routeSubscription.unsubscribe();
     }
 
     removeAlert(alert: Alert) {
-        //check if already removed to prevent error on auto close
+        // check if already removed to prevent error on auto close
         if (!this.alerts.includes(alert)) return;
 
         if (this.fade) {
-            //fade out alert
+            // fade out alert
             alert.fade = true;
 
-            //remove alert after faded out
+            // remove alert after faded out
             setTimeout(() => {
                 this.alerts = this.alerts.filter(x => x !== alert);
-            }, 250);     
+            }, 250);
         } else {
-            //remove alert
-            this.alerts = this.alerts.filter(x => x!== alert);
+            // remove alert
+            this.alerts = this.alerts.filter(x => x !== alert);
         }
     }
-    cssClass(alert: Alert) {
-        if (!alert) return;  
+
+    cssClasses(alert: Alert) {
+        if (!alert) return;
 
         const classes = ['alert', 'alert-dismissable'];
-
-        const alerTypeClass = {
-            [Alert.Type.Success]: 'alert alert-success',
-            [Alert.Type.Error]: 'alert alert-danger',
-            [Alert.Type.Info]: 'alert alert-info',
-            [Alert.Type.Warning]: 'alert alert-warning'        
+                
+        const alertTypeClass = {
+            [AlertType.Success]: 'alert alert-success',
+            [AlertType.Error]: 'alert alert-danger',
+            [AlertType.Info]: 'alert alert-info',
+            [AlertType.Warning]: 'alert alert-warning'
         }
 
-        classes.push(alerTypeClass[alert.type]);
+        classes.push(alertTypeClass[alert.type]);
 
         if (alert.fade) {
             classes.push('fade');
         }
 
         return classes.join(' ');
-    }    
+    }
 }

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import { HttpRequest, HttpHandler,HttpEvent, HttpInterceptor } from '@angular/common/http';
+import { HttpRequest, HttpHandler, HttpEvent, HttpInterceptor } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
-import { catchError} from '@app/_services';
+import { catchError } from 'rxjs/operators';
 
 import { AccountService } from '@app/_services';
 
@@ -9,15 +9,15 @@ import { AccountService } from '@app/_services';
 export class ErrorInterceptor implements HttpInterceptor {
     constructor(private accountService: AccountService) { }
 
-    interceptor(request: HttpRequest<any>, next:HttpHandler) : Observable<HttpEvent<any>> {
+    intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
         return next.handle(request).pipe(catchError(err => {
-            if ([401,403].includes(err.status) && this.accountService.accountvakue) {
-                //auto logout if 401 or 403 response retrurned from api
+            if ([401, 403].includes(err.status) && this.accountService.accountValue) {
+                // auto logout if 401 or 403 response returned from api
                 this.accountService.logout();
             }
 
             const error = (err && err.error && err.error.message) || err.statusText;
-            console.error(error);
+            console.error(err);
             return throwError(error);
         }))
     }
